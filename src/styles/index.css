@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@import "tailwindcss";
+
+@import "flowbite/src/themes/default";
+
+@plugin "flowbite/plugin";
+
+@source "../../node_modules/flowbite";
+
+html, body, button, input, a, p, h1, h2, h3, h4 {
+
+    font-family: "Inter", sans-serif;
+    pointer-events: all;
+}
+
+
+/* Custom Scrollbar for Webkit browsers (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-gray-500); /* gray-500 */
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-gray-400); /* gray-400 */
+}
+/* --- Custom Cursor Style --- */
+/* This class will be added to the <body> by the Cursor component */
+body.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* Optional: Ensure inputs still show a text cursor if needed */
+body.custom-cursor-active input[type="text"],
+body.custom-cursor-active input[type="email"],
+body.custom-cursor-active input,
+body.custom-cursor-active textarea {
+    cursor: text !important;
+}
