@@ -1,96 +1,115 @@
 
 import { Router, Route } from '@solidjs/router';
-import { Component } from "solid-js";
+import { createSignal, createEffect } from 'solid-js';
+import type { Component } from 'solid-js';
+import { useLocation } from '@solidjs/router';
+import AdminDashboard from '../pages/admin/dashboard/Dashboard';
+import OrganizerDashbaord from '../pages/organizer/dashboard/Dashboard';
+import OrganizerProfilePage from '../pages/organizer/dashboard/Profile';
+import AdminProfilePage from '../pages/admin/dashboard/Profile';
+import AdminLoginPage from '../pages/admin/auth/Login';
+import VendorTermsPage from '../pages/organizer/auth/Terms';
+import OrganizerLoginPage from '../pages/organizer/auth/Login';
+import OrganizerRegisterPage from '../pages/organizer/auth/Register';
+import Register from '../pages/AuthPage';
+import Dashboard from '../pages/Dashboard';
+import UserProfile from '../pages/UserProfile';
+import EventDetail from '../pages/EventDetail';
+import Checkout from '../pages/Checkout';
+import OrderHistory from '../pages/OrderHistory';
+import AuthPage from '../pages/AuthPage';
+import TicketTest from '../pages/TicketTest';
+import TicketTestCreator from '../pages/TicketTestCreator';
+import OrganizerEvents from '../pages/organizer/dashboard/Events';
+import OrganizerVenues from '../pages/organizer/dashboard/Venues';
+import OrganizerOrders from '../pages/organizer/dashboard/Orders';
+import OrganizerAttractions from '../pages/organizer/dashboard/Attraction';
+import OrganizerStripeConnectPage from '../pages/organizer/dashboard/StripeConnect';
+import OrganizerFinancePage from '../pages/organizer/dashboard/Finance';
+import AdminCategoriesPage from '../pages/admin/dashboard/Categories';
+import AdminEventsPage from '../pages/admin/dashboard/Event';
+import AdminVenuesPage from '../pages/admin/dashboard/Venues';
+import AdminOrdersPage from '../pages/admin/dashboard/Orders';
+import AdminPaymentsPage from '../pages/admin/dashboard/Payments';
+import DatePickerModal from '../components/modal/DatePickerModalContent';
+import GenericModal from '../components/modal/GenericModal';
+import { ModalProvider } from '../context/ModalContext';
+import { OrganizerProvider } from '../context/OrganizerContext';
+import { AdminProvider } from '../context/AdminContext';
+import { UserProvider } from '../context/UserContext';
+import { withAuth } from '../middleware/authWrapper';
+import BannedPage from '../pages/BannedPage';
+import NotFoundPage from '../pages/NotFoundPage';
+import { withAdminAuth } from '../middleware/adminWrapper';
+import AdminUsersPage from '../pages/admin/dashboard/Users';
 
-import HomePage from '../pages/Home';
-import AboutPage from '../pages/About';
-import PricingPage from '../pages/Pricing';
-import TermsPrivacyPage from '../pages/TermsPrivacy';
-import ContactUsPage from '../pages/ContactUs';
-import FAQPage from '../pages/FAQ';
-import LoginPage from '../pages/Auth/Login';
-import RegisterPage from '../pages/Auth/Register'
-import DashboardPage from '../pages/Dashboard/Dashboard'
-import DashboardSearchPage from '../pages/Dashboard/Search';
-import ProjectPage from '../pages/Dashboard/Project/Project';
-import ProjectMemberPage from '../pages/Dashboard/Project/ProjectMember'
-import ProjectRolesPage from '../pages/Dashboard/Project/ProjectRoles'
-import ProjectTasksPage from '../pages/Dashboard/Project/ProjectTask'
-import ProjectArchivesPage from '../pages/Dashboard/Project/ProjectArchive'
-import ProjectSettingsPage from '../pages/Dashboard/Project/ProjectSettings'
-import DashboardGuard from '../components/Guard/DashboardGuard';
-import ProjectGuard from '../components/Guard/ProjectGuard';
-import { AuthProvider } from '../context/AuthContext';
-import NotFoundPage from '../pages/404';
-import InvitePage from '../pages/Dashboard/InvitePage';
-import InviteGuard from '../components/Guard/InviteGuard';
+const   AppRoute: Component = () => {
 
-
-
-
-
-const AppRoute: Component = () => {
   return (
-  <AuthProvider>
-      <Router>
-            <Route path="/" component={
-              HomePage
-              } />
-            <Route path="/about" component={
-              AboutPage
-            } />
-            <Route path="/terms-privacy" component={
-              TermsPrivacyPage
-            } />
-            <Route path="/contact" component={
-              ContactUsPage
-              } />
-            <Route path="/FAQ" component={
-              FAQPage
-            } />
-            <Route path="/pricing" component={
-              PricingPage
-            } />
+<>
+      {/* ======================================================================== */}
+      {/* PUBLIC ROUTES - No authentication required                           */}
+      {/* ======================================================================== */}
+      <Route path="/" component={AuthPage} />
+      <Route path="/login" component={AuthPage} />
+      <Route path="/register" component={AuthPage} />
+      <Route path="/admin/login" component={AdminLoginPage} />
 
-            <Route path="/login" component={
-              LoginPage
-            } />
+      {/* Public view of an event */}
+      <Route path="/event/:id" component={EventDetail} /> 
 
-            <Route path="/register" component={
-              RegisterPage
-            } />
+      <Route path="/organizer/login" component={OrganizerLoginPage} />
+      <Route path="/organizer/register" component={OrganizerRegisterPage} />
+      
 
-        {/* This ensures only authenticated users can attempt to accept an invite */}
-        <Route path="/invite/:invite_code" component={InviteGuard}>
-            <Route path="/" component={InvitePage} /> {/* InvitePage renders INSIDE the guard */}
-        </Route>
 
-              {/* Wrap the entire /dashboard section in the DashboardGuard */}
-              <Route path="/dashboard" component={DashboardGuard}>
-                  {/* Routes directly under /dashboard */}
-                  <Route path="/" component={DashboardPage} />
-                  <Route path="/invite" component={InvitePage} />
-                  <Route path="/search" component={DashboardSearchPage} />
-              
-                  {/* --- Protected Project Routes --- */}
-                  {/* Wrap the entire /project/:project_id section in the ProjectGuard */}
-                  <Route path="/project/:project_id" component={ProjectGuard}>
-                      {/* These routes will only render if the user is authenticated AND a project member */}
-                      <Route path="/" component={ProjectPage} />
-                      <Route path="/members" component={ProjectMemberPage} />
-                      <Route path="/roles" component={ProjectRolesPage} />
-                      <Route path="/tasks" component={ProjectTasksPage} />
-                      <Route path="/archives" component={ProjectArchivesPage} />
-                      <Route path="/settings" component={ProjectSettingsPage} />
-                  </Route>
-              </Route>
+      {/*  BEGONE THOT */}
+      <Route path="/banned" component={withAuth(BannedPage)} />
 
-          {/* --- Catch-all 404 Not Found Route --- */}
-          {/* This MUST be the last route to work correctly */}
-          <Route path="*" component={NotFoundPage} /> 
-      </Router>
-    </AuthProvider>
 
+      {/* ======================================================================== */}
+      {/* USER PROTECTED ROUTES - Must be logged in as 'user' or 'organizer'    */}
+      {/* ======================================================================== */}
+      <Route path=""   >
+        <Route path="/dashboard" component={withAuth(Dashboard)} />
+        <Route path="/profile" component={withAuth(UserProfile)} />
+        <Route path="/checkout/:eventId" component={withAuth(Checkout)} />
+        <Route path="/orders" component={withAuth(OrderHistory)} />
+      </Route>
+
+
+      {/* ======================================================================== */}
+      {/* ORGANIZER PROTECTED ROUTES - Must be logged in as 'organizer'          */}
+      {/* ======================================================================== */}
+      <Route path="/organizer"  >
+        <Route path="/dashboard" component={withAuth(OrganizerDashbaord, { requires: ['organizer'] })}  />
+        <Route path="/events" component={withAuth(OrganizerEvents, { requires: ['organizer'] })} />
+        <Route path="/venues" component={withAuth(OrganizerVenues, { requires: ['organizer'] })} />
+        <Route path="/orders" component={withAuth(OrganizerOrders, { requires: ['organizer'] })} />
+        <Route path="/attractions" component={withAuth(OrganizerAttractions, { requires: ['organizer'] })}  />
+        <Route path="/stripe" component={withAuth(OrganizerStripeConnectPage, { requires: ['organizer'] })}  />
+        <Route path="/finance" component={withAuth(OrganizerFinancePage, { requires: ['organizer'] })} />
+        <Route path="/onboarding" component={withAuth(VendorTermsPage, { requires: ['organizer'] })}  />
+      </Route>
+
+
+      {/* ======================================================================== */}
+      {/* ADMIN PROTECTED ROUTES - Must be logged in as 'admin'                  */}
+      {/* ======================================================================== */}
+      <Route path="/admin"  >
+
+        <Route path="/dashboard" component={withAdminAuth(AdminDashboard)} />
+        <Route path="/categories" component={withAdminAuth(AdminCategoriesPage)} />
+        <Route path="/events" component={withAdminAuth(AdminEventsPage)} />
+        <Route path="/venues" component={withAdminAuth(AdminVenuesPage)} />
+        <Route path="/users" component={withAdminAuth(AdminUsersPage)} />
+        <Route path="/orders" component={withAdminAuth(AdminOrdersPage)} />
+        <Route path="/payments" component={withAdminAuth(AdminPaymentsPage)} />
+      </Route>
+
+        <Route path="*404" component={NotFoundPage} />
+
+</>
   );
 };
 

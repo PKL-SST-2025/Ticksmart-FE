@@ -7,6 +7,14 @@ import './styles/index.css';
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 
+import _ from 'lodash';
+import noUiSlider from 'nouislider';
+
+window._ = _;
+window.noUiSlider = noUiSlider;
+
+
+
 const root = document.getElementById('root');
 
 if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
@@ -15,4 +23,8 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   );
 }
 
-render(() => <App />, root!);
+// Preline UI
+import("preline/dist").then(() => {
+  render(() => <App />, root!);
+});
+

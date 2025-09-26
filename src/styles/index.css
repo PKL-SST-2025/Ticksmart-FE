@@ -1,21 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @import "tailwindcss";
-
 @import "flowbite/src/themes/default";
+@import "preline/variants.css";
 
 @plugin "flowbite/plugin";
-
+@import "flowbite/src/themes/default";
 @source "../../node_modules/flowbite";
 
-html, body, button, input, a, p, h1, h2, h3, h4 {
+@source "../node_modules/preline/dist/*.js";
+@source "../../node_modules/flowbite";
+@import 'vanilla-calendar-pro/styles/index.css';
 
-    font-family: "Inter", sans-serif;
-    pointer-events: all;
+
+
+@import 'leaflet/dist/leaflet.css';
+
+/* Base typography */
+html, body, button, input {
+  font-family: "Inter", sans-serif;
+  pointer-events: all;
 }
 
+a, p, h1, h2, h3, h4 {
+  font-family: "Inter", sans-serif;
+}
 
-/* Custom Scrollbar for Webkit browsers (Chrome, Safari, Edge) */
+/* Remove weird black/blue background on hover/focus text */
+a {
+  @apply hover:text-blue-600 dark:hover:text-blue-400  transition-colors duration-200;
+  cursor: pointer;
+}
+input, select {
+  cursor: pointer;
+}
+/* --- Custom Scrollbar --- */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
@@ -25,25 +44,71 @@ html, body, button, input, a, p, h1, h2, h3, h4 {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: var(--color-gray-500); /* gray-500 */
+  background-color: var(--color-gray-500); /* light mode default */
   border-radius: 10px;
   border: 3px solid transparent;
   background-clip: content-box;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-gray-400); /* gray-400 */
+  background-color: var(--color-gray-400);
 }
+
+/* Dark mode scrollbar overrides */
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-gray-700);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-gray-600);
+}
+
 /* --- Custom Cursor Style --- */
-/* This class will be added to the <body> by the Cursor component */
 body.custom-cursor-active * {
   cursor: none !important;
 }
 
-/* Optional: Ensure inputs still show a text cursor if needed */
 body.custom-cursor-active input[type="text"],
 body.custom-cursor-active input[type="email"],
 body.custom-cursor-active input,
 body.custom-cursor-active textarea {
-    cursor: text !important;
+  cursor: text !important;
+}
+
+
+/* --- Light Mode Autofill Style --- */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #ffffff inset !important; /* Your light mode background */
+    box-shadow: 0 0 0 30px #ffffff inset !important;
+    -webkit-text-fill-color: #111111 !important; /* Your light mode text color */
+}
+
+/* --- Dark Mode Autofill Style --- */
+@media (prefers-color-scheme: dark) {
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #2d2d2d inset !important; /* Your dark mode background */
+      box-shadow: 0 0 0 30px #2d2d2d inset !important;
+      -webkit-text-fill-color: #eeeeee !important; /* Your dark mode text color */
+  }
+}
+
+
+.concert-image {
+  background-image: url("../../public/Background/view-futuristic-building-architecture.jpg");  
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+}
+
+
+
+.leaflet-control-attribution.leaflet-control {
+    display: none;
 }
